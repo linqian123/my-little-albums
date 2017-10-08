@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Albums</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="artDialog/css/ui-dialog.css" rel="stylesheet">
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="artDialog/dist/dialog-min.js"></script>
+    <style>
+      .row h4{
+        text-align: center;
+      }
+      #new{
+        display: none;
+      }
+    </style>
+    <script> 
+        $(function(){
+            $('#newFloder').on('click',function(){
+                dialog({
+                  title:"新建相册",
+                  content:$('#new'),
+                  okValue:"确定",
+                  ok:function(){
+                    var flodername = $('#flodername').val();
+                    $.post("/newfloder",{
+                      "flodername":flodername
+                    },function(result){
+                      if(result == "1"){
+                        location.href = "http://127.0.0.1:3000/";
+                      };
+                    });
+                  },
+                  cancelValue:"取消",
+                  cancel:function(){}
+                }).showModal();
+            });
+        });
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!--导航栏logo部分-->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">My Albums</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">全部相册</a></li>
+        </ul>
+        <form class="navbar-form navbar-right">
+          <button type="button" class="btn btn-info" id="newFloder">新建相册</button>
+        </form>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="row">
+          <% for(var i = 0; i < albums.length; i++){ %>
+            <div class="col-xs-6 col-md-3">
+              <a href="<%= albums[i] %>" class="thumbnail">
+                <img src="images/folder.jpg" alt="">
+              </a>
+              <h4><%= albums[i] %></h4>
+            </div>
+          <% } %>
+      </div>
+    </div>
+    <form style="width:250px;" id="new">
+      <div class="form-group">
+        <p>
+          <label>填写相册名：</label>
+        </p>
+        <p>
+          <input type="text" id="flodername">
+        </p>
+      </div>
+    </form>
+  </body>
+</html>

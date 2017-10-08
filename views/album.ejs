@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Albums</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/artDialog/css/ui-dialog.css" rel="stylesheet">
+    <script src="/js/jquery-1.11.3.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/artDialog/dist/dialog-min.js"></script>
+    <style>
+        #upload,#newflodername{
+          display: none;
+        }
+        #upload p{
+          margin: 15px;
+        }
+        #submit{
+          margin-left:15px;
+          margin-top: 18px;
+        }
+    </style>
+    <script>
+        $(function(){
+            $('#up').on('click',function(){
+                dialog({
+                  title:"上传图片",
+                  content:$('#upload'),
+                  cancelValue:"取消",
+                  cancel:function(){}
+                }).showModal();
+            });
+            $('#delete').on('click',function(){
+               dialog({
+                  title:"Are you sure",
+                  content:"<h4>你确定要删除该相册吗？</h4>",
+                  okValue:"确定",
+                  ok:function(){
+                      var flodername = $('#flodername').html();
+                      $.post('/deletefloder',{
+                        "flodername":flodername
+                      },function(result){
+                          if(result == '1'){
+                            location.href = 'http://127.0.0.1:3000/';
+                          };
+                      });
+                  },
+                  cancelValue:"取消",
+                  cancel:function(){}
+                }).showModal();
+            });
+            $('#rename').on('click',function(){
+               dialog({
+                  title:"相册重命名",
+                  content:$("#newflodername"),
+                  okValue:"确定",
+                  ok:function(){
+                      var newname = $('#newname').val();
+                      var oldname = $('#oldname').val();
+                      $.post('/rename',{
+                        "oldname":oldname,
+                        "newname":newname
+                      },function(result){
+                          if(result == '1'){
+                            location.href = 'http://127.0.0.1:3000/'+newname;
+                          };
+                      });
+                  },
+                  cancelValue:"取消",
+                  cancel:function(){}
+                }).showModal();
+            });
+            $(".img").on('click',function(){
+              var flodername = $("#flodername").html();
+              var imgsrc = this.src;
+              var a = this.id;
+              dialog({
+                  title:"查看大图",
+                  content:$('#'+a).clone().css('width','600px'),    //使用克隆的节点呈现在弹出框当中
+                  cancelValue:'确定',
+                  cancel:function(){},
+                  okValue:"删除",
+                  ok:function(){
+                    dialog({
+                      title:"Are you sure",
+                      content:"<h4>你确定要删除该图片吗？</h4>",
+                      okValue:"确定",
+                      ok:function(){
+                        $.post('/deleteimg',{
+                          "flodername":flodername,
+                          "imgsrc":imgsrc
+                        },function(result){
+                            if(result == '1'){
+                              location.href = 'http://127.0.0.1:3000/'+flodername;
+                            };
+                        });
+                      },
+                      cancelValue:"取消",
+                      cancel:function(){}
+                    }).showModal();
+                  }
+                }).showModal();
+            });
+        });
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!--导航栏logo部分-->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">My Albums</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">全部相册</a></li>
+        </ul>
+        <form class="navbar-form navbar-right">
+          <button type="button" class="btn btn-danger" id="delete">删除相册</button>
+        </form>
+        <form class="navbar-form navbar-right">
+          <button type="button" class="btn btn-warning" id="rename">重命名</button>
+        </form>
+        <form class="navbar-form navbar-right">
+          <button type="button" class="btn btn-info" id="up">上传图片</button>
+        </form>
+      </div>
+    </nav>
+    <div class="container">
+      <ol class="breadcrumb">
+        <li><a href="/">全部相册</a></li>
+        <li class="active" id="flodername"><%= albumName %></li>
+      </ol>
+      <div class="row">
+          <% for(var i = 0; i < photos.length; i++){ %>
+            <div class="col-xs-6 col-md-3">
+              <a href="javascript:(0)" class="thumbnail">
+                <img src="<%= photos[i] %>" class="img" id="<%= i %>">
+              </a>
+            </div>
+          <% } %>
+      </div>
+    </div>
+    <form style="width:250px;" action="/uploadImg" method="POST" enctype="multipart/form-data" id="upload">
+      <div class="form-group">
+        <p>
+          <label id="albumname"><%= albumName %></label>
+          <input type="text" name="flodername" value="<%= albumName %>" style="display:none;">
+        </p>
+        <p>
+          <label>选择上传的图片：</label>
+        </p>
+        <p>
+          <input type="file" name="picture">
+        </p>
+        <button type="submit" class="btn btn-info" id="submit">提交</button>
+      </div>
+    </form>
+    <form style="width:250px;" id="newflodername">
+      <div class="form-group">
+        <p>
+          <label>填写新的相册名：</label>
+        </p>
+        <p>
+          <input type="text" id="newname">
+          <input type="text" id="oldname" value="<%= albumName %>" style="display:none;">
+        </p>
+      </div>
+    </form>
+  </body>
+</html>

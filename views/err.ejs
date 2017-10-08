@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Albums</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/js/jquery-1.11.3.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script>
+      $(function(){
+          $('#back').on('click',function(){
+              location.href="http://127.0.0.1:3000/";
+          });
+      });  
+    </script>
+    <style>
+      .row h4{
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!--导航栏logo部分-->
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">My Albums</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">全部相册</a></li>
+        </ul>
+        <form class="navbar-form navbar-right">
+          <button type="button" class="btn btn-info" id="back">返回</button>
+        </form>
+      </div>
+    </nav>
+    <div class="container">
+        <img src="/images/404.jpg" alt=""/>
+    </div>
+  </body>
+</html>
